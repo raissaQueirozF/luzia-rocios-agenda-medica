@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User } from '../types';
-import { toast } from '@/components/ui/sonner';
+import { User, UserRole } from '../types';
+import { toast } from 'sonner';
 
 interface AuthContextType {
   user: User | null;
@@ -14,12 +14,12 @@ interface AuthContextType {
 }
 
 // Mock user data for demonstration purposes
-const mockUsers = [
+const mockUsers: User[] = [
   {
     id: '1',
     name: 'Admin User',
     email: 'admin@example.com',
-    role: 'admin' as const,
+    role: 'admin',
     avatarUrl: '',
     phone: '(41) 98765-4321',
     cpf: '123.456.789-00',
@@ -31,7 +31,7 @@ const mockUsers = [
     id: '2',
     name: 'Maria Silva',
     email: 'maria@example.com',
-    role: 'patient' as const,
+    role: 'patient',
     phone: '(41) 91234-5678',
     cpf: '987.654.321-00',
     birthDate: '1990-05-15',

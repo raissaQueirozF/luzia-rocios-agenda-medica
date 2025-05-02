@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Bell, Menu, User, LogOut, Calendar, Heart, Settings } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -21,6 +21,7 @@ interface MainLayoutProps {
 export const MainLayout = ({ children }: MainLayoutProps) => {
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const userInitials = user?.name
     ? user.name
@@ -31,9 +32,27 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
         .toUpperCase()
     : 'U';
 
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
+
+  const navItems = [
+    { label: 'Início', href: '/' },
+    { label: 'Serviços', href: '/services' },
+    { label: 'Médicos', href: '/doctors' },
+    { label: 'Sobre', href: '/about' },
+    { label: 'FAQ', href: '/faq' },
+    { label: 'Contato', href: '/contact' },
+  ];
+
   const mobileMenuItems = [
     { label: 'Início', href: '/', icon: Heart },
+    { label: 'Serviços', href: '/services', icon: Heart },
+    { label: 'Médicos', href: '/doctors', icon: User },
     { label: 'Agendamentos', href: '/appointments', icon: Calendar },
+    { label: 'Sobre', href: '/about', icon: Heart },
+    { label: 'FAQ', href: '/faq', icon: Heart },
+    { label: 'Contato', href: '/contact', icon: Heart },
     { label: 'Perfil', href: '/profile', icon: User },
   ];
 
@@ -55,21 +74,19 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6 text-sm">
-            <Link to="/" className="font-medium hover:text-hospital-mediumBrown transition-colors">
-              Início
-            </Link>
-            <Link to="/services" className="font-medium hover:text-hospital-mediumBrown transition-colors">
-              Serviços
-            </Link>
-            <Link to="/doctors" className="font-medium hover:text-hospital-mediumBrown transition-colors">
-              Médicos
-            </Link>
-            <Link to="/about" className="font-medium hover:text-hospital-mediumBrown transition-colors">
-              Sobre
-            </Link>
-            <Link to="/contact" className="font-medium hover:text-hospital-mediumBrown transition-colors">
-              Contato
-            </Link>
+            {navItems.map((item) => (
+              <Link 
+                key={item.href} 
+                to={item.href} 
+                className={`font-medium transition-colors ${
+                  isActive(item.href) 
+                    ? 'text-hospital-gold' 
+                    : 'hover:text-hospital-mediumBrown'
+                }`}
+              >
+                {item.label}
+              </Link>
+            ))}
           </nav>
 
           <div className="flex items-center gap-2">
@@ -184,7 +201,12 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
                         <div className="grid gap-2">
                           {mobileMenuItems.map((item, index) => (
                             <Link key={index} to={item.href}>
-                              <Button variant="ghost" className="w-full justify-start">
+                              <Button 
+                                variant="ghost" 
+                                className={`w-full justify-start ${
+                                  isActive(item.href) ? 'text-hospital-gold' : ''
+                                }`}
+                              >
                                 <item.icon className="mr-2 h-4 w-4" />
                                 {item.label}
                               </Button>
@@ -207,32 +229,19 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
                     ) : (
                       <>
                         <div className="grid gap-2">
-                          <Link to="/">
-                            <Button variant="ghost" className="w-full justify-start">
-                              <Heart className="mr-2 h-4 w-4" />
-                              Início
-                            </Button>
-                          </Link>
-                          <Link to="/services">
-                            <Button variant="ghost" className="w-full justify-start">
-                              Serviços
-                            </Button>
-                          </Link>
-                          <Link to="/doctors">
-                            <Button variant="ghost" className="w-full justify-start">
-                              Médicos
-                            </Button>
-                          </Link>
-                          <Link to="/about">
-                            <Button variant="ghost" className="w-full justify-start">
-                              Sobre
-                            </Button>
-                          </Link>
-                          <Link to="/contact">
-                            <Button variant="ghost" className="w-full justify-start">
-                              Contato
-                            </Button>
-                          </Link>
+                          {mobileMenuItems.filter(item => item.href !== '/profile' && item.href !== '/appointments').map((item, index) => (
+                            <Link key={index} to={item.href}>
+                              <Button 
+                                variant="ghost" 
+                                className={`w-full justify-start ${
+                                  isActive(item.href) ? 'text-hospital-gold' : ''
+                                }`}
+                              >
+                                <item.icon className="mr-2 h-4 w-4" />
+                                {item.label}
+                              </Button>
+                            </Link>
+                          ))}
                         </div>
                         <div className="grid grid-cols-2 gap-2">
                           <Button variant="outline" onClick={() => navigate('/login')}>
@@ -276,16 +285,16 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
             </div>
             <div>
               <h3 className="text-lg font-semibold mb-2">Links Rápidos</h3>
-              <div className="grid gap-1 text-sm">
-                <Link to="/" className="text-muted-foreground hover:text-foreground">
-                  Início
-                </Link>
-                <Link to="/services" className="text-muted-foreground hover:text-foreground">
-                  Serviços
-                </Link>
-                <Link to="/doctors" className="text-muted-foreground hover:text-foreground">
-                  Médicos
-                </Link>
+              <div className="grid grid-cols-2 gap-1 text-sm">
+                {navItems.map((item) => (
+                  <Link 
+                    key={item.href} 
+                    to={item.href} 
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
                 <Link to="/appointments" className="text-muted-foreground hover:text-foreground">
                   Agendamentos
                 </Link>
